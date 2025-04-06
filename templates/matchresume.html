@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Matcher</title>
+    <!-- Manifest -->
+<link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+<meta name="theme-color" content="#0d6efd">
+
+<!-- Icons for home screen -->
+<link rel="icon" sizes="192x192" href="{{ url_for('static', filename='icons/icon-192.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-512.png') }}">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+    <style>
+        body {
+            background: linear-gradient(45deg, #02d8d4, #169aff, #a901eb);
+            background-size: 400% 400%;
+            animation: gradientBG 10s ease infinite;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .card {
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+        .card-header {
+            background: linear-gradient(90deg, #007bff, #00c6ff);
+            color: white;
+            border-radius: 15px 15px 0 0;
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .form-control {
+            background: rgba(255, 255, 255, 0.3);
+            color: #fff;
+            border: none;
+        }
+        .form-control::placeholder {
+            color: #eee;
+        }
+        /* Back to Home Button */
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #e74c3c;
+            color: white;
+            padding: 10px 15px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+        .back-btn:hover {
+            background: #c0392b;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Back to Home Button -->
+    <a href="/" class="back-btn">⬅ Back to Home</a>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">Job Description and Resume Matcher</div>
+            <div class="card-body">
+                <form method="POST" action="/matcher" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="job_description">Job Description:</label>
+                        <textarea class="form-control" id="job_description" name="job_description" rows="5" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="resumes">Upload Resumes:</label>
+                        <p>Please Upload More than 5 Resumes</p>
+                        <input type="file" class="form-control" id="resumes" name="resumes" multiple required accept=".pdf, .docx, .txt">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Match Resumes</button>
+                </form>
+                {% if message %}
+                    <div class="alert alert-info mt-4">
+                        <p>{{ message }}</p>
+                        {% if top_resumes and similarity_scores %}
+
+                         <canvas id="resumeChart"></canvas>
+                        <script>
+                            var ctx = document.getElementById('resumeChart').getContext('2d');
+                            Chart.register(ChartDataLabels); // Register the plugin here
+
+                            var resumeChart = new Chart(ctx, {
+                                type: 'bar',
+                                data: {
+                                    labels: {{ top_resumes | tojson }},
+                                    datasets: [{
+                                        label: 'Similarity Score',
+                                        data: {{ similarity_scores | tojson }},
+                                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                                        borderColor: 'rgba(75, 192, 192, 1)',
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true
+                                        }
+                                    },
+                                    plugins: {
+                                        datalabels: {
+                                            anchor: 'end',  // Position at the top of the bar
+                                            align: 'top',
+                                            color: 'black',  // Label color
+                                            font: {
+                                                weight: 'bold',
+                                                size: 14
+                                            },
+                                            formatter: function(value) {
+                                                return (value * 100).toFixed(2) + "%";  // Convert to percentage with 2 decimal places
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        </script>
+                        {% endif %}
+
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('/static/service-worker.js')
+        .then(function (registration) {
+          console.log('ServiceWorker registered: ', registration.scope);
+        }, function (error) {
+          console.log('ServiceWorker failed: ', error);
+        });
+    });
+  }
+</script>
+
+
+</body>
+</html>

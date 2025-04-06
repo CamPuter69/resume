@@ -1,0 +1,367 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Screening AI</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #2c3e50, #4ca1af);
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h1, h2 {
+            color: #f1c40f;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        input[type="submit"] {
+            padding: 12px 25px;
+            background: #f1c40f;
+            color: #2c3e50;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background: #e67e22;
+            color: #fff;
+        }
+
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Resume Screening AI</h1>
+        <p>Upload your resume (PDF/TXT) to categorize it and get job recommendations!</p>
+        <ul>
+            <li>✔ Resume Categorization</li>
+            <li>✔ Job Recommendations</li>
+            <li>✔ Information Extraction</li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <h2>Upload Your Resume</h2>
+        <form action="/pred" method="post" enctype="multipart/form-data">
+            <input type="file" name="resume" accept=".pdf, .txt" required>
+            <input type="submit" value="Analyze Resume">
+        </form>
+
+        {% if message %}
+        <p class="info">{{message}}</p>
+        {% endif %}
+
+        {% if predicted_category %}
+        <div class="info">
+            <h2>Results</h2>
+            <p><strong>Category:</strong> {{predicted_category}}</p>
+            <p><strong>Recommended Job:</strong> {{recommended_job}}</p>
+        </div>
+        <div class="info">
+            <h2>Extracted Information</h2>
+            <p><strong>Name:</strong> {{name}}</p>
+            <p><strong>Phone:</strong> {{phone}}</p>
+            <p><strong>Email:</strong> {{email}}</p>
+            {% if extracted_skills %}
+            <h3>Skills:</h3>
+            <ul>
+                {% for skill in extracted_skills %}
+                <li>{{ skill }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>No skills found.</p>
+            {% endif %}
+            {% if extracted_education %}
+            <h3>Education:</h3>
+            <ul>
+                {% for edu in extracted_education %}
+                <li>{{ edu }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>No education details found.</p>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+
+</html> -->
+
+<!DOCTYPE html>
+ <html lang="en">
+ 
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Resume Screening AI</title>
+     <!-- Manifest -->
+<link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+<meta name="theme-color" content="#0d6efd">
+
+<!-- Icons for home screen -->
+<link rel="icon" sizes="192x192" href="{{ url_for('static', filename='icons/icon-192.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-512.png') }}">
+
+     <style>
+         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap');
+         
+         body {
+             font-family: 'Poppins', sans-serif;
+             background: linear-gradient(-45deg,  #02d8d4, #169aff, #a901eb);
+             background-size: 400% 400%;
+             animation: gradientBG 10s ease infinite;
+             color: #fff;
+             text-align: center;
+             margin: 0;
+             padding: 0;
+         }
+ 
+         @keyframes gradientBG {
+             0% { background-position: 0% 50%; }
+             50% { background-position: 100% 50%; }
+             100% { background-position: 0% 50%; }
+         }
+ 
+         .container {
+             max-width: 600px;
+             margin: 50px auto;
+             padding: 20px;
+             background: rgba(255, 255, 255, 0.1);
+             border-radius: 10px;
+             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+         }
+ 
+         h1 {
+             font-size: 2.5em;
+             font-weight: 700;
+             color: #f0ff23;
+             text-shadow: 0 0 10px rgb(239, 129, 3);
+             animation: glow 1.5s infinite alternate;
+         }
+ 
+         @keyframes glow {
+             0% { text-shadow: 0 0 10px rgba(255, 255, 255, 0.8); }
+             100% { text-shadow: 0 0 20px rgba(255, 255, 255, 1); }
+         }
+ 
+         ul {
+             list-style-type: none;
+             padding: 0;
+         }
+ 
+         li {
+             background: rgba(255, 255, 255, 0.2);
+             padding: 10px;
+             margin: 5px;
+             border-radius: 5px;
+         }
+ 
+         form {
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+         }
+ 
+         input[type="file"], input[type="submit"] {
+             padding: 12px 25px;
+             margin: 10px 0;
+             border-radius: 5px;
+             border: none;
+             cursor: pointer;
+             font-size: 1em;
+             transition: all 0.3s ease;
+         }
+ 
+         input[type="file"] {
+             background: rgba(255, 255, 255, 0.2);
+             color: white;
+         }
+ 
+         input[type="submit"] {
+             background: #f1c40f;
+             color: #2c3e50;
+             font-weight: bold;
+         }
+ 
+         input[type="submit"]:hover {
+             background: #e67e22;
+             color: #fff;
+         }
+ 
+         .info {
+             margin-top: 20px;
+             padding: 15px;
+             background: rgba(255, 255, 255, 0.1);
+             border-radius: 5px;
+         }
+ 
+         .animated-img {
+             width: 150px;
+             margin: 20px auto;
+             animation: bounce 2s infinite;
+         }
+ 
+         @keyframes bounce {
+             0%, 100% { transform: translateY(0); }
+             50% { transform: translateY(-10px); }
+         }
+     </style>
+ </head>
+ 
+ <body>
+    <div class="container">
+        <button onclick="goBack()" class="back-btn">⬅ Back to Home</button>
+    </div>
+    <script>
+        function goBack() {
+            window.location.href = "/";  // Redirect to index.html
+        }
+    </script>
+    
+    <style>
+        .back-btn {
+            background: #e74c3c;
+            color: white;
+            padding: 12px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 20px;
+        }
+    
+        .back-btn:hover {
+            background: #c0392b;
+        }
+    </style>
+     <div class="container">
+         <h1>Resume Screening AI</h1>
+         <img class="animated-img" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Job interview icon">
+         <p>Upload your resume (PDF/TXT) to categorize it and get job recommendations!</p>
+         <ul>
+             <li>✔ Resume Categorization</li>
+             <li>✔ Job Recommendations</li>
+             <li>✔ Information Extraction</li>
+         </ul>
+     </div>
+ 
+     <div class="container">
+         <h2>Upload Your Resume</h2>
+         <form action="/pred" method="post" enctype="multipart/form-data">
+             <input type="file" name="resume" accept=".pdf, .txt" required>
+             <input type="submit" value="Analyze Resume">
+         </form>
+ 
+         {% if message %}
+         <p class="info">{{message}}</p>
+         {% endif %}
+ 
+         {% if predicted_category %}
+         <div class="info">
+             <h2>Results</h2>
+             <p><strong>Category:</strong> {{predicted_category}}</p>
+             <p><strong>Recommended Job:</strong> {{recommended_job}}</p>
+         </div>
+         <div class="info">
+             <h2>Extracted Information</h2>
+             <p><strong>Name:</strong> {{name}}</p>
+             <p><strong>Phone:</strong> {{phone}}</p>
+             <p><strong>Email:</strong> {{email}}</p>
+             {% if extracted_skills %}
+             <h3>Skills:</h3>
+             <ul>
+                 {% for skill in extracted_skills %}
+                 <li>{{ skill }}</li>
+                 {% endfor %}
+             </ul>
+             {% else %}
+             <p>No skills found.</p>
+             {% endif %}
+             {% if extracted_education %}
+             <h3>Education:</h3>
+             <ul>
+                 {% for edu in extracted_education %}
+                 <li>{{ edu }}</li>
+                 {% endfor %}
+             </ul>
+             {% else %}
+             <p>No education details found.</p>
+             {% endif %}
+         </div>
+         {% endif %}
+     </div>
+     <script>
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', function () {
+            navigator.serviceWorker.register('/static/service-worker.js')
+              .then(function (registration) {
+                console.log('ServiceWorker registered: ', registration.scope);
+              }, function (error) {
+                console.log('ServiceWorker failed: ', error);
+              });
+          });
+        }
+      </script>
+      
+    
+    
+    
+ </body>
+ 
+ </html>
+ 

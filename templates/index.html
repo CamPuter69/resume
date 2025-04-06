@@ -1,0 +1,169 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Processing System</title>
+    <!-- Manifest -->
+<link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+<meta name="theme-color" content="#0d6efd">
+
+<!-- Icons for home screen -->
+<link rel="icon" sizes="192x192" href="{{ url_for('static', filename='icons/icon-192.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-512.png') }}">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.9.6/lottie.min.js"></script> <!-- Lottie Animation -->
+    
+    <style>
+        body {
+            background: linear-gradient(to bottom right, #01fcef, #b700ff);
+            background-size: cover;
+            background-attachment: fixed;
+            color: white;
+            text-align: center;
+            padding: 50px;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            animation: zoomInOut 3s infinite alternate;
+        }
+
+        @keyframes zoomInOut {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+
+        .btn-lg {
+            width: 250px;
+            margin: 15px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-lg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.5s ease;
+        }
+
+        .btn-lg:hover::before {
+            left: 100%;
+        }
+
+        .btn-lg:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+        }
+
+        #animated-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 30px;
+        }
+
+        /* Animated Section */
+        .animation-container {
+            margin-top: 50px;
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            flex-wrap: wrap;
+        }
+
+        .animation-box {
+            width: 300px;
+            height: 300px;
+        }
+
+        @media (max-width: 768px) {
+            .animation-container {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Resume Processing System</h1>
+        <p>Select an option:</p>
+        <a href="{{ url_for('resume') }}" class="btn btn-primary btn-lg"><span>Resume Parser</span></a>
+        <a href="{{ url_for('matchresume') }}" class="btn btn-success btn-lg"><span>Resume Matcher</span></a>
+        
+        <!-- Animated Typing Text -->
+        <p id="animated-text"></p>
+
+        <!-- Animated Job & Interview Illustrations -->
+        <div class="animation-container">
+            <div id="job-search" class="animation-box"></div>
+            <div id="interview" class="animation-box"></div>
+            <div id="hiring" class="animation-box"></div>
+        </div>
+    </div>
+
+    <script>
+        // Typed.js Animation for text
+        document.addEventListener("DOMContentLoaded", function() {
+            new Typed("#animated-text", {
+                strings: ["Parse Resumes Seamlessly", "Find the Best Job Matches", "Make Hiring Effortless"],
+                typeSpeed: 50,
+                backSpeed: 25,
+                loop: true
+            });
+
+            // Lottie Animations
+            let jobSearchAnimation = lottie.loadAnimation({
+                container: document.getElementById('job-search'),
+                renderer: 'svg',
+                loop: true,
+                autoplay: true,
+                path: 'https://assets4.lottiefiles.com/packages/lf20_j1adxtyb.json' // Job Search Animation
+            });
+
+            let interviewAnimation = lottie.loadAnimation({
+                container: document.getElementById('interview'),
+                renderer: 'svg',
+                loop: true,
+                autoplay: true,
+                path: 'https://assets4.lottiefiles.com/private_files/lf30_xtfnse7p.json' // Interview Animation
+            });
+
+            let hiringAnimation = lottie.loadAnimation({
+                container: document.getElementById('hiring'),
+                renderer: 'svg',
+                loop: true,
+                autoplay: true,
+                path: 'https://assets4.lottiefiles.com/packages/lf20_kdx6cani.json' // Hiring Animation
+            });
+        });
+        if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('/static/service-worker.js')
+        .then(function (registration) {
+          console.log('ServiceWorker registered: ', registration.scope);
+        }, function (error) {
+          console.log('ServiceWorker failed: ', error);
+        });
+    });
+  }
+</script>
+</body>
+</html>
